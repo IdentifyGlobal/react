@@ -3,13 +3,14 @@ export interface Identity {
   username: string;
 }
 
-export type IdentityContextType = {
-  setIdentity: (identity: Identity) => void;
-}
-
 export interface AuthorizationSettings {
   domainID: string;
   serverID: string;
+}
+
+export type IdentityContextType = {
+  identity: Identity | undefined,
+  setIdentity: (identity: Identity) => void;
 }
 
 export interface OAuth2AuthorizationRequestParameters {
@@ -25,4 +26,5 @@ export interface OAuth2AuthorizationRequestParameters {
 
 export interface OpenIDConfiguration {
   authorization_endpoint: string;
+  token_endpoint: string;
 }

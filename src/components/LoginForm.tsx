@@ -1,4 +1,4 @@
-// components/oidcframe/OIDCFrame.tsx
+// components/LoginForm.tsx
 import * as React from 'react';
 // import { IdentityContext } from '../context/identityContext';
 // import { IdentityContextType, Identity } from '../@types/identity';
@@ -8,12 +8,6 @@ export interface LoginFormProps {
   settings: AuthorizationSettings;
 }
 
-/**
- * LoginForm
- * 
- * @param props 
- * @returns 
- */
 const LoginForm: React.FC<LoginFormProps> = (props) => {
   const [openidConfiguration, setOpenIDConfiguration] = React.useState<OpenIDConfiguration>();
   React.useEffect(() => {
@@ -54,7 +48,7 @@ const LoginForm: React.FC<LoginFormProps> = (props) => {
   //   setIdentity(formData);
   // };
   return (
-    <iframe src={iframeSrc} />
+    <iframe src={iframeSrc} width="500" height="700" />
   );
 };
 
