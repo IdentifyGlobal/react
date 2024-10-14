@@ -1,8 +1,7 @@
 // components/LoginForm.tsx
 import * as React from 'react';
 import { IdentityContext } from '../context/identityContext';
-import { IdentityContextType, Identity } from '../@types/identify';
-import { OpenIDConfiguration, OAuth2AuthzRequestParams } from '../@types/identify';
+import { IdentityContextType, Identity, OpenIDConfiguration, OAuth2AuthzRequestParams } from '../@types/identify';
 
 export interface LoginFormProps {
 }
