@@ -16,8 +16,8 @@ const LoginForm: React.FC<LoginFormProps> = (props) => {
   const { setIdentity } = React.useContext(IdentityContext) as IdentityContextType;
   const [openidConfiguration, setOpenIDConfiguration] = React.useState<OpenIDConfiguration>();
   React.useEffect(() => {
-    const { settings } = props
-    const openidConfigurationURL = new URL(`http://localhost:8788/d/${settings.domainID}/s/${settings.serverID}/.well-known/openid-configuration`);
+    const { domainID, serverID } = props.settings
+    const openidConfigurationURL = new URL(`http://localhost:8788/d/${domainID}/s/${serverID}/.well-known/openid-configuration`);
     fetch(openidConfigurationURL)
       .then((response: Response) => response.json())
       .then((json: OpenIDConfiguration) => {

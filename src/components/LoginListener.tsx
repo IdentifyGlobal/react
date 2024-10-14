@@ -17,8 +17,8 @@ const LoginListener: React.FC<LoginListenerProps> = (props) => {
     const authResponseParams = new URLSearchParams(locationURL.hash.substring(1))
 
     if (authResponseParams.has("code")) {
-      const { settings } = props
-      const openidConfigurationURL = new URL(`http://localhost:8788/d/${settings.domainID}/s/${settings.serverID}/.well-known/openid-configuration`);
+      const { domainID, serverID } = props.settings
+      const openidConfigurationURL = new URL(`http://localhost:8788/d/${domainID}/s/${serverID}/.well-known/openid-configuration`);
       fetch(openidConfigurationURL)
         .then((response: Response) => response.json())
         .then((openidConfiguration: OpenIDConfiguration) => {
