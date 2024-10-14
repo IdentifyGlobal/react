@@ -7,18 +7,18 @@ export type Identity = {
   token_type: String | undefined;
 }
 
-export interface AuthorizationSettings {
+export interface AuthorizationConfig {
   domainID: string;
   serverID: string;
 }
 
 export type IdentityContextType = {
-  settings: AuthorizationSettings,
+  config: AuthorizationConfig,
   identity: Identity | undefined,
   setIdentity: (identity: Identity) => void;
 }
 
-export interface OAuth2AuthorizationRequestParameters {
+export interface OAuth2AuthzRequestParams {
   response_type: string;
   response_mode: string;
   client_id: string;
@@ -29,7 +29,7 @@ export interface OAuth2AuthorizationRequestParameters {
   code_challenge_method: string;
 }
 
-export interface OAuth2TokenRequestParameters {
+export interface OAuth2TokenRequestParams {
   grant_type: string;
   code: string | null;
 }

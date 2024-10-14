@@ -4,10 +4,18 @@ import { IdentityContext } from '../context/identityContext';
 import { IdentityContextType, Identity } from '../@types/identify';
 import {
   OpenIDConfiguration,
-  OAuth2AuthorizationRequestParameters,
+  OAuth2AuthzRequestParams,
 } from '../@types/identify';
 
 export interface LoginFormProps {
+  config: {
+    type: string;
+    mode: string;
+    clientID: string;
+    redirectURI: string;
+    scope: string;
+    state: string;
+  }
 }
 
 /**
@@ -17,11 +25,10 @@ export interface LoginFormProps {
  * @returns 
  */
 const LoginForm: React.FC<LoginFormProps> = (props) => {
-  const { settings, setIdentity } = React.useContext(IdentityContext) as IdentityContextType;
+  const { config, setIdentity } = React.useContext(IdentityContext) as IdentityContextType;
   const [openidConfiguration, setOpenIDConfiguration] = React.useState<OpenIDConfiguration>();
   React.useEffect(() => {
-    const { domainID, serverID } = settings
-    const openidConfigurationURL = new URL(`/d/${domainID}/s/${serverID}/.well-known/openid-configuration`,
+    const openidConfigurationURL = new URL(`/d/${config.domainID}/s/${config.serverID}/.well-known/openid-configuration`,
       process.env.IDENTIFY_AUTHORIZATION_SERVER_URL_BASE);
     fetch(openidConfigurationURL)
       .then((response: Response) => response.json())
@@ -34,13 +41,14 @@ const LoginForm: React.FC<LoginFormProps> = (props) => {
   }, [])
   const authEndpointSrc: string = React.useMemo(() => {
     if (openidConfiguration) {
-      const requestParams: OAuth2AuthorizationRequestParameters = {
-        response_type: 'code',
-        response_mode: 'fragment',
-        client_id: '123',
-        redirect_uri: 'http://localhost:5173/oauth2/callback',
-        scope: 'email',
-        state: 'abc',
+      const { config } = props
+      const requestParams: OAuth2AuthzRequestParams = {
+        response_type: config.type,
+        response_mode: config.mode,
+        client_id: config.clientID,
+        redirect_uri: config.redirectURI,
+        scope: config.scope,
+        state: config.state,
         code_challenge: 'abc',
         code_challenge_method: 'S256'
       };
