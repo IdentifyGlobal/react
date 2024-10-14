@@ -1,7 +1,5 @@
 // @types.identify.ts
-export interface Identity {
-  username: string;
-}
+export type Identity = any;
 
 export interface AuthorizationSettings {
   domainID: string;
@@ -22,6 +20,19 @@ export interface OAuth2AuthorizationRequestParameters {
   state: string;
   code_challenge: string;
   code_challenge_method: string;
+}
+
+export interface OAuth2TokenRequestParameters {
+  grant_type: string;
+  code: string | null;
+}
+
+export type OAuth2TokenResponse = {
+  access_token: string;
+  expires_in: number;
+  id_token: string | undefined;
+  refresh_token: string | undefined;
+  token_type: String | undefined;
 }
 
 export interface OpenIDConfiguration {

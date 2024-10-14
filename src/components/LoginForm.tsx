@@ -1,14 +1,19 @@
 // components/LoginForm.tsx
 import * as React from 'react';
-// import { IdentityContext } from '../context/identityContext';
-// import { IdentityContextType, Identity } from '../@types/identity';
-import { AuthorizationSettings, OpenIDConfiguration, OAuth2AuthorizationRequestParameters } from '../@types/identify';
+import { IdentityContext } from '../context/identityContext';
+import { IdentityContextType } from '../@types/identify';
+import {
+  AuthorizationSettings,
+  OpenIDConfiguration,
+  OAuth2AuthorizationRequestParameters,
+} from '../@types/identify';
 
 export interface LoginFormProps {
   settings: AuthorizationSettings;
 }
 
 const LoginForm: React.FC<LoginFormProps> = (props) => {
+  const { setIdentity } = React.useContext(IdentityContext) as IdentityContextType;
   const [openidConfiguration, setOpenIDConfiguration] = React.useState<OpenIDConfiguration>();
   React.useEffect(() => {
     const { settings } = props
@@ -18,10 +23,13 @@ const LoginForm: React.FC<LoginFormProps> = (props) => {
       .then((json: OpenIDConfiguration) => {
         setOpenIDConfiguration(json)
       })
+    window.addEventListener("oauth2load", ((event: CustomEvent) => {
+      setIdentity(event.detail)
+    }) as EventListener)
   }, [])
   const iframeSrc = React.useMemo(() => {
     if (openidConfiguration) {
-      const authRequestParams: OAuth2AuthorizationRequestParameters = {
+      const requestParams: OAuth2AuthorizationRequestParameters = {
         response_type: 'code',
         response_mode: 'fragment',
         client_id: '123',
@@ -31,22 +39,10 @@ const LoginForm: React.FC<LoginFormProps> = (props) => {
         code_challenge: 'abc',
         code_challenge_method: 'S256'
       };
-      const authEndpointURL = new URL('?' + new URLSearchParams(Object.entries(authRequestParams)).toString(), openidConfiguration.authorization_endpoint);
+      const authEndpointURL = new URL('?' + new URLSearchParams(Object.entries(requestParams)), openidConfiguration.authorization_endpoint);
       return authEndpointURL.toString();
     }
   }, [openidConfiguration])
-  // const { setIdentity } = React.useContext(IdentityContext) as IdentityContextType;
-  // const [formData, setFormData] = React.useState<Identity | {}>();
-  // const handleForm = (e: React.FormEvent<HTMLInputElement>): void => {
-  //   setFormData({
-  //     ...formData,
-  //     [e.currentTarget.id]: e.currentTarget.value,
-  //   });
-  // };
-  // const handleSaveTodo = (e: React.FormEvent, formData: Identity | any) => {
-  //   e.preventDefault();
-  //   setIdentity(formData);
-  // };
   return (
     <iframe src={iframeSrc} width="500" height="700" />
   );
