@@ -12,22 +12,29 @@ export interface LoginFormProps {
   settings: AuthorizationSettings;
 }
 
+/**
+ * LoginForm
+ * 
+ * @param props 
+ * @returns 
+ */
 const LoginForm: React.FC<LoginFormProps> = (props) => {
   const { setIdentity } = React.useContext(IdentityContext) as IdentityContextType;
   const [openidConfiguration, setOpenIDConfiguration] = React.useState<OpenIDConfiguration>();
   React.useEffect(() => {
     const { domainID, serverID } = props.settings
-    const openidConfigurationURL = new URL(`http://localhost:8788/d/${domainID}/s/${serverID}/.well-known/openid-configuration`);
+    const openidConfigurationURL = new URL(`/d/${domainID}/s/${serverID}/.well-known/openid-configuration`,
+      process.env.IDENTIFY_AUTHORIZATION_SERVER_URL_BASE);
     fetch(openidConfigurationURL)
       .then((response: Response) => response.json())
       .then((json: OpenIDConfiguration) => {
         setOpenIDConfiguration(json)
       })
-    window.addEventListener("oauth2load", ((event: CustomEvent) => {
+    window.addEventListener("identify.oauth2load", ((event: CustomEvent) => {
       setIdentity(event.detail as Identity)
     }) as EventListener)
   }, [])
-  const iframeSrc = React.useMemo(() => {
+  const authEndpointSrc: string = React.useMemo(() => {
     if (openidConfiguration) {
       const requestParams: OAuth2AuthorizationRequestParameters = {
         response_type: 'code',
@@ -42,9 +49,9 @@ const LoginForm: React.FC<LoginFormProps> = (props) => {
       const authEndpointURL = new URL('?' + new URLSearchParams(Object.entries(requestParams)), openidConfiguration.authorization_endpoint);
       return authEndpointURL.toString();
     }
-  }, [openidConfiguration])
+  }, [openidConfiguration]) as string
   return (
-    <iframe src={iframeSrc} width="500" height="700" />
+    <iframe src={authEndpointSrc} width="500" height="700" />
   );
 };
 

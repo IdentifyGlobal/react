@@ -1,4 +1,4 @@
-// components/LoginListener.tsx
+// components/LoginCallback.tsx
 import * as React from 'react';
 import {
   AuthorizationSettings,
@@ -7,18 +7,24 @@ import {
   OAuth2TokenResponse,
 } from '../@types/identify';
 
-export interface LoginListenerProps {
+export interface LoginCallbackProps {
   settings: AuthorizationSettings;
 }
 
-const LoginListener: React.FC<LoginListenerProps> = (props) => {
+/**
+ * 
+ * @param props 
+ * @returns 
+ */
+const LoginCallback: React.FC<LoginCallbackProps> = (props) => {
   React.useEffect(() => {
     const locationURL = new URL(location.href)
     const authResponseParams = new URLSearchParams(locationURL.hash.substring(1))
 
     if (authResponseParams.has("code")) {
       const { domainID, serverID } = props.settings
-      const openidConfigurationURL = new URL(`http://localhost:8788/d/${domainID}/s/${serverID}/.well-known/openid-configuration`);
+      const openidConfigurationURL = new URL(`/d/${domainID}/s/${serverID}/.well-known/openid-configuration`,
+        process.env.IDENTIFY_AUTHORIZATION_SERVER_URL_BASE);
       fetch(openidConfigurationURL)
         .then((response: Response) => response.json())
         .then((openidConfiguration: OpenIDConfiguration) => {
@@ -30,7 +36,7 @@ const LoginListener: React.FC<LoginListenerProps> = (props) => {
           fetch(tokenEndpointURL)
             .then((response: Response) => response.json())
             .then((tokenResponse: OAuth2TokenResponse) => {
-              const event = new CustomEvent('oauth2load', { detail: tokenResponse })
+              const event = new CustomEvent('identify.oauth2load', { detail: tokenResponse })
               window.parent.dispatchEvent(event)
             })
         })
@@ -39,4 +45,4 @@ const LoginListener: React.FC<LoginListenerProps> = (props) => {
   return null;
 };
 
-export default LoginListener;
+export default LoginCallback;

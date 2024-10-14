@@ -5,7 +5,10 @@ import typescript from "@rollup/plugin-typescript";
 import dts from "rollup-plugin-dts";
 import terser from "@rollup/plugin-terser";
 import peerDepsExternal from "rollup-plugin-peer-deps-external";
+import dotenv from 'dotenv';
+import replace from '@rollup/plugin-replace'
 
+dotenv.config();
 const packageJson = require("./package.json");
 
 export default [
@@ -24,11 +27,15 @@ export default [
       },
     ],
     plugins: [
+      replace({
+        'process.env.IDENTIFY_AUTHORIZATION_SERVER_URL_BASE': JSON.stringify(process.env.IDENTIFY_AUTHORIZATION_SERVER_URL_BASE),
+        preventAssignment: true
+      }),
       peerDepsExternal(),
       resolve(),
       commonjs(),
       typescript({ tsconfig: "./tsconfig.json" }),
-      terser(),
+      terser()
     ],
     external: ["react", "react-dom"],
   },
