@@ -2,11 +2,7 @@
 import * as React from 'react';
 import { IdentityContext } from '../context/identityContext';
 import { IdentityContextType, Identity } from '../@types/identify';
-import {
-  OpenIDConfiguration,
-  OAuth2TokenRequestParams,
-  OAuth2TokenResponse,
-} from '../@types/identify';
+import { OpenIDConfiguration, OAuth2TokenRequestParams, OAuth2TokenResponse } from '../@types/identify';
 
 export interface LoginCallbackProps {
 }
