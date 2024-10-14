@@ -1,15 +1,18 @@
 // context/identityContext.tsx
 import * as React from 'react';
-import { IdentityContextType, Identity } from '../@types/identify';
+import { IdentityContextType, Identity, AuthorizationSettings } from '../@types/identify';
 import { JSX } from 'react/jsx-runtime';
 
 export const IdentityContext = React.createContext<IdentityContextType | null>(null);
 
-export const IdentityProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const IdentityProvider: React.FC<{
+  settings: AuthorizationSettings,
+  children: React.ReactNode
+}> = ({ settings, children }) => {
   const [identity, setIdentity] = React.useState<Identity>();
   return (
     <IdentityContext.Provider
-      value={{ identity, setIdentity }}
+      value={{ settings, identity, setIdentity }}
     >
       {children}
     </IdentityContext.Provider>

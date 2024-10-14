@@ -13,6 +13,7 @@ export interface AuthorizationSettings {
 }
 
 export type IdentityContextType = {
+  settings: AuthorizationSettings,
   identity: Identity | undefined,
   setIdentity: (identity: Identity) => void;
 }

@@ -9,7 +9,6 @@ import {
 } from '../@types/identify';
 
 export interface LoginFormProps {
-  settings: AuthorizationSettings;
 }
 
 /**
@@ -19,10 +18,10 @@ export interface LoginFormProps {
  * @returns 
  */
 const LoginForm: React.FC<LoginFormProps> = (props) => {
-  const { setIdentity } = React.useContext(IdentityContext) as IdentityContextType;
+  const { settings, setIdentity } = React.useContext(IdentityContext) as IdentityContextType;
   const [openidConfiguration, setOpenIDConfiguration] = React.useState<OpenIDConfiguration>();
   React.useEffect(() => {
-    const { domainID, serverID } = props.settings
+    const { domainID, serverID } = settings
     const openidConfigurationURL = new URL(`/d/${domainID}/s/${serverID}/.well-known/openid-configuration`,
       process.env.IDENTIFY_AUTHORIZATION_SERVER_URL_BASE);
     fetch(openidConfigurationURL)
@@ -51,7 +50,7 @@ const LoginForm: React.FC<LoginFormProps> = (props) => {
     }
   }, [openidConfiguration]) as string
   return (
-    <iframe src={authEndpointSrc} width="500" height="700" />
+    <iframe src={authEndpointSrc} width="500" height="700" {...props} />
   );
 };
 
