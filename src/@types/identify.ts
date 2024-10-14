@@ -1,5 +1,11 @@
 // @types.identify.ts
-export type Identity = any;
+export type Identity = {
+  access_token: string;
+  expires_in: number;
+  id_token: string | undefined;
+  refresh_token: string | undefined;
+  token_type: String | undefined;
+}
 
 export interface AuthorizationSettings {
   domainID: string;

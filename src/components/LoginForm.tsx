@@ -1,7 +1,7 @@
 // components/LoginForm.tsx
 import * as React from 'react';
 import { IdentityContext } from '../context/identityContext';
-import { IdentityContextType } from '../@types/identify';
+import { IdentityContextType, Identity } from '../@types/identify';
 import {
   AuthorizationSettings,
   OpenIDConfiguration,
@@ -18,13 +18,13 @@ const LoginForm: React.FC<LoginFormProps> = (props) => {
   React.useEffect(() => {
     const { settings } = props
     const openidConfigurationURL = new URL(`http://localhost:8788/d/${settings.domainID}/s/${settings.serverID}/.well-known/openid-configuration`);
-    fetch(openidConfigurationURL.href)
+    fetch(openidConfigurationURL)
       .then((response: Response) => response.json())
       .then((json: OpenIDConfiguration) => {
         setOpenIDConfiguration(json)
       })
     window.addEventListener("oauth2load", ((event: CustomEvent) => {
-      setIdentity(event.detail)
+      setIdentity(event.detail as Identity)
     }) as EventListener)
   }, [])
   const iframeSrc = React.useMemo(() => {

@@ -8,16 +8,17 @@ export const IdentityContext = React.createContext<IdentityContextType | null>(n
 export const IdentityProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [identity, setIdentity] = React.useState<Identity>();
   return (
-    <IdentityContext.Provider value={{ identity, setIdentity }}>
+    <IdentityContext.Provider
+      value={{ identity, setIdentity }}
+    >
       {children}
     </IdentityContext.Provider>
   );
 };
 
-export const withIdentity = (Component: React.FC<{ identity: Identity }>) => {
+export const withIdentity = (Component: React.FC<{ identity: Identity | undefined }>) => {
   return (props: JSX.IntrinsicAttributes) => {
-    <IdentityContext.Consumer>
-      {value => <Component {...props} identity={value}></Component>}
-    </IdentityContext.Consumer>
+    const { identity } = React.useContext(IdentityContext) as IdentityContextType;
+    return <Component {...props} identity={identity} />
   };
 };

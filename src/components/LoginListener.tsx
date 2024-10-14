@@ -30,7 +30,7 @@ const LoginListener: React.FC<LoginListenerProps> = (props) => {
           fetch(tokenEndpointURL)
             .then((response: Response) => response.json())
             .then((tokenResponse: OAuth2TokenResponse) => {
-              const event = new CustomEvent('oauth2load', { detail: { tokenResponse } })
+              const event = new CustomEvent('oauth2load', { detail: tokenResponse })
               window.parent.dispatchEvent(event)
             })
         })
