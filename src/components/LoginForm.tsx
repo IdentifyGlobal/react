@@ -3,7 +3,6 @@ import * as React from 'react';
 import { IdentityContext } from '../context/identityContext';
 import { IdentityContextType, Identity } from '../@types/identify';
 import {
-  AuthorizationSettings,
   OpenIDConfiguration,
   OAuth2AuthorizationRequestParameters,
 } from '../@types/identify';
