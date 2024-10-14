@@ -8,14 +8,6 @@ import {
 } from '../@types/identify';
 
 export interface LoginFormProps {
-  config: {
-    type: string;
-    mode: string;
-    clientID: string;
-    redirectURI: string;
-    scope: string;
-    state: string;
-  }
 }
 
 /**
@@ -25,7 +17,7 @@ export interface LoginFormProps {
  * @returns 
  */
 const LoginForm: React.FC<LoginFormProps> = (props) => {
-  const { config, setIdentity } = React.useContext(IdentityContext) as IdentityContextType;
+  const { config, state, setIdentity } = React.useContext(IdentityContext) as IdentityContextType;
   const [openidConfiguration, setOpenIDConfiguration] = React.useState<OpenIDConfiguration>();
   React.useEffect(() => {
     const openidConfigurationURL = new URL(`/d/${config.domainID}/s/${config.serverID}/.well-known/openid-configuration`,
@@ -41,14 +33,13 @@ const LoginForm: React.FC<LoginFormProps> = (props) => {
   }, [])
   const authEndpointSrc: string = React.useMemo(() => {
     if (openidConfiguration) {
-      const { config } = props
       const requestParams: OAuth2AuthzRequestParams = {
         response_type: config.type,
         response_mode: config.mode,
         client_id: config.clientID,
         redirect_uri: config.redirectURI,
         scope: config.scope,
-        state: config.state,
+        state: state,
         code_challenge: 'abc',
         code_challenge_method: 'S256'
       };

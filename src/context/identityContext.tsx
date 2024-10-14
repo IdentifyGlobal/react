@@ -10,9 +10,10 @@ export const IdentityProvider: React.FC<{
   children: React.ReactNode
 }> = ({ config, children }) => {
   const [identity, setIdentity] = React.useState<Identity>();
+  const [state, setState] = React.useState<any>();
   return (
     <IdentityContext.Provider
-      value={{ config, identity, setIdentity }}
+      value={{ config, state, setState, identity, setIdentity }}
     >
       {children}
     </IdentityContext.Provider>

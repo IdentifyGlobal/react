@@ -10,10 +10,17 @@ export type Identity = {
 export interface AuthorizationConfig {
   domainID: string;
   serverID: string;
+  type: string;
+  mode: string;
+  clientID: string;
+  redirectURI: string;
+  scope: string;
 }
 
 export type IdentityContextType = {
   config: AuthorizationConfig,
+  state: any | undefined,
+  setState: (state: any) => void,
   identity: Identity | undefined,
   setIdentity: (identity: Identity) => void;
 }
