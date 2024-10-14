@@ -1,6 +1,11 @@
 // components/LoginListener.tsx
 import * as React from 'react';
-import { AuthorizationSettings, OpenIDConfiguration, OAuth2TokenRequestParameters, OAuth2TokenResponse } from '../@types/identify';
+import {
+  AuthorizationSettings,
+  OpenIDConfiguration,
+  OAuth2TokenRequestParameters,
+  OAuth2TokenResponse,
+} from '../@types/identify';
 
 export interface LoginListenerProps {
   settings: AuthorizationSettings;
@@ -25,8 +30,7 @@ const LoginListener: React.FC<LoginListenerProps> = (props) => {
           fetch(tokenEndpointURL)
             .then((response: Response) => response.json())
             .then((tokenResponse: OAuth2TokenResponse) => {
-              const myCustomData = { tokenResponse }
-              const event = new CustomEvent('oauth2load', { detail: myCustomData })
+              const event = new CustomEvent('oauth2load', { detail: { tokenResponse } })
               window.parent.dispatchEvent(event)
             })
         })
