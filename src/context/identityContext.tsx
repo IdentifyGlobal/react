@@ -13,10 +13,10 @@ export const IdentityContext = React.createContext<IdentityContextType | null>(n
  */
 export const IdentityProvider: React.FC<{ config: AuthorizationConfig, children: React.ReactNode }> = ({ config, children }) => {
   const [identity, setIdentity] = React.useState<Identity>();
-  const [state, setState] = React.useState<any>();
+  const [applicationState, setApplicationState] = React.useState<any>();
   return (
     <IdentityContext.Provider
-      value={{ config, state, setState, identity, setIdentity }}
+      value={{ config, applicationState, setApplicationState, identity, setIdentity }}
     >
       {children}
     </IdentityContext.Provider>

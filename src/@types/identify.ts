@@ -19,8 +19,8 @@ export interface AuthorizationConfig {
 
 export type IdentityContextType = {
   config: AuthorizationConfig,
-  state: any | undefined,
-  setState: (state: any) => void,
+  applicationState: any | undefined,
+  setApplicationState: (applicationState: any) => void,
   identity: Identity | undefined,
   setIdentity: (identity: Identity) => void;
 }
@@ -39,6 +39,7 @@ export interface OAuth2AuthzRequestParams {
 export interface OAuth2TokenRequestParams {
   grant_type: string;
   code: string | null;
+  code_verifier: string | null | undefined;
 }
 
 export type OAuth2TokenResponse = {
