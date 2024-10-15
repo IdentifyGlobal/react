@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { IdentityContext } from '../context/identityContext';
 import { IdentityContextType, OpenIDConfiguration, OAuth2TokenRequestParams, OAuth2TokenResponse } from '../@types/identify';
-
+import { jwtDecode } from 'jwt-decode';
 export interface LoginCallbackProps {
 }
 
@@ -35,7 +35,8 @@ const LoginCallback: React.FC<LoginCallbackProps> = (props) => {
           fetch(tokenEndpointURL)
             .then((response: Response) => response.json())
             .then((tokenResponse: OAuth2TokenResponse) => {
-              const event = new CustomEvent('identify.oauth2load', { detail: tokenResponse })
+              const identity = jwtDecode(tokenResponse.id_token as string)
+              const event = new CustomEvent('identify.oauth2load', { detail: identity })
               window.parent.dispatchEvent(event)
             })
         })

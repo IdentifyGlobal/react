@@ -17,21 +17,33 @@ export interface LoginFormProps {
  */
 const LoginForm: React.FC<LoginFormProps> = (props) => {
   const { config, applicationState, setIdentity } = React.useContext(IdentityContext) as IdentityContextType;
-  const [state, setState] = React.useState<{ openidConfiguration: OpenIDConfiguration, stateKey: string, codeVerifier: string, codeChallenge: string } | null>(null)
+  const [state, setState] = React.useState<{
+    openidConfiguration: OpenIDConfiguration,
+    stateKey: string,
+    codeVerifier: string,
+    codeChallenge: string
+  } | null>(null)
   React.useEffect(() => {
     const openidConfigurationURL = new URL(`/d/${config.domainID}/s/${config.serverID}/.well-known/openid-configuration`,
       process.env.IDENTIFY_AUTHORIZATION_SERVER_URL_BASE);
     fetch(openidConfigurationURL)
       .then((response: Response) => response.json())
       .then((openidConfiguration: OpenIDConfiguration) => {
+        const stateKey = cryptoRandomString({ length: 12 })
         const codeVerifier = cryptoRandomString({
           length: 64,
           characters: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~'
+        }), codeChallenge = Base64url.stringify(sha256(codeVerifier))
+        window.sessionStorage.setItem(`__state_${stateKey}`, JSON.stringify({
+          applicationState,
+          codeVerifier,
+        }))
+        setState({
+          openidConfiguration,
+          stateKey,
+          codeVerifier,
+          codeChallenge,
         })
-        const stateKey = cryptoRandomString({ length: 12 })
-        window.sessionStorage.setItem(`__state_${stateKey}`, JSON.stringify({ applicationState, codeVerifier }))
-        const codeChallenge = Base64url.stringify(sha256(codeVerifier))
-        setState({ openidConfiguration, stateKey, codeVerifier, codeChallenge })
       }).catch((reason) => {
         console.error(reason)
       })
@@ -55,7 +67,8 @@ const LoginForm: React.FC<LoginFormProps> = (props) => {
         code_challenge: state.codeChallenge,
         code_challenge_method: 'S256'
       };
-      const authEndpointURL = new URL('?' + new URLSearchParams(Object.entries(requestParams)), state.openidConfiguration.authorization_endpoint);
+      const authEndpointURL = new URL('?' + new URLSearchParams(Object.entries(requestParams)),
+        state.openidConfiguration.authorization_endpoint);
       return authEndpointURL.toString();
     }
   }, [state]) as string
