@@ -42,25 +42,21 @@ export const IdentityProvider: React.FC<{ config: AuthorizationConfig, children:
 };
 
 /**
- * withIdentity
- * @param Component 
+ * useIdentity
+ * 
  * @returns 
  */
-export const withIdentity = (Component: React.FC<{ identity: Identity | undefined | null }>) => {
-  return (props: JSX.IntrinsicAttributes) => {
-    const { identity } = React.useContext(IdentityContext) as IdentityContextType;
-    return <Component {...props} identity={identity} />
-  };
+export const useIdentity = () => {
+  const { identity } = React.useContext(IdentityContext) as IdentityContextType;
+  return identity
 };
 
 /**
- * withToken
- * @param Component 
+ * useToken
+ * 
  * @returns 
  */
-export const withToken = (Component: React.FC<{ token: OAuth2TokenResponse | undefined | null }>) => {
-  return (props: JSX.IntrinsicAttributes) => {
-    const { token } = React.useContext(IdentityContext) as IdentityContextType;
-    return <Component {...props} token={token} />
-  };
+export const useToken = () => {
+  const { token } = React.useContext(IdentityContext) as IdentityContextType;
+  return token
 };
