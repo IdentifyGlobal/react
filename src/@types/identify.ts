@@ -1,10 +1,6 @@
 // @types.identify.ts
 export type Identity = {
-  access_token: string;
-  expires_in: number;
-  id_token: string | undefined;
-  refresh_token: string | undefined;
-  token_type: String | undefined;
+  username: string;
 }
 
 export interface AuthorizationConfig {
@@ -18,10 +14,10 @@ export interface AuthorizationConfig {
 }
 
 export type IdentityContextType = {
-  config: AuthorizationConfig,
-  applicationState: any | undefined,
-  setApplicationState: (applicationState: any) => void,
-  identity: Identity | undefined,
+  config: AuthorizationConfig;
+  token: OAuth2TokenResponse | undefined | null;
+  setToken: (token: OAuth2TokenResponse) => void;
+  identity: Identity | undefined | null;
   setIdentity: (identity: Identity) => void;
 }
 
@@ -38,16 +34,17 @@ export interface OAuth2AuthzRequestParams {
 
 export interface OAuth2TokenRequestParams {
   grant_type: string;
-  code: string | null;
-  code_verifier: string | null | undefined;
+  code?: string | null;
+  refresh_token?: string | null | undefined;
+  code_verifier?: string | null | undefined;
 }
 
 export type OAuth2TokenResponse = {
-  access_token: string;
-  expires_in: number;
-  id_token: string | undefined;
-  refresh_token: string | undefined;
-  token_type: String | undefined;
+  access_token?: string;
+  expires_in?: number;
+  id_token?: string | undefined;
+  refresh_token?: string | undefined;
+  token_type?: String | undefined;
 }
 
 export interface OpenIDConfiguration {
