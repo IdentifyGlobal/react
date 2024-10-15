@@ -98,7 +98,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, ...props }) => {
     }
   }, [state]) as string
   return (
-    token === null ? <iframe src={authorizeEndpointSrc} width="500" height="700" {...props} /> : null
+    authorizeEndpointSrc && token === null ? <iframe src={authorizeEndpointSrc} width="500" height="700" {...props} /> : null
   );
 };
 

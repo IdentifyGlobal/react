@@ -2,14 +2,10 @@
 import * as React from 'react';
 import { IdentityContext } from '../context/identityContext';
 import { IdentityContextType, OpenIDConfiguration, OAuth2TokenRequestParams, OAuth2TokenResponse } from '../@types/identify';
+
 export interface LoginCallbackProps {
 }
 
-/**
- * 
- * @param props 
- * @returns 
- */
 const LoginCallback: React.FC<LoginCallbackProps> = (props) => {
   const { config } = React.useContext(IdentityContext) as IdentityContextType;
   React.useEffect(() => {
@@ -20,8 +16,7 @@ const LoginCallback: React.FC<LoginCallbackProps> = (props) => {
       const storageKey = `__state_${authResponseParams.get("state")}`
       const state = JSON.parse(window.sessionStorage.getItem(storageKey) || "")
       window.sessionStorage.removeItem(storageKey)
-      const openidConfigurationURL = new URL(`/d/${config.domainID}/s/${config.serverID}/.well-known/openid-configuration`,
-        process.env.IDENTIFY_AUTHORIZATION_SERVER_URL_BASE);
+      const openidConfigurationURL = new URL(`/d/${config.domainID}/s/${config.serverID}/.well-known/openid-configuration`, process.env.IDENTIFY_AUTHORIZATION_SERVER_URL_BASE);
       fetch(openidConfigurationURL)
         .then((response: Response) => response.json())
         .then((openidConfiguration: OpenIDConfiguration) => {
