@@ -16,12 +16,12 @@ export interface AuthorizationConfig {
 export type IdentityContextType = {
   config: AuthorizationConfig;
   token: OAuth2TokenResponse | undefined | null;
-  setToken: (token: OAuth2TokenResponse) => void;
+  setToken: (token: OAuth2TokenResponse | undefined | null) => void;
   identity: Identity | undefined | null;
-  setIdentity: (identity: Identity) => void;
+  setIdentity: (identity: Identity | undefined | null) => void;
 }
 
-export interface OAuth2AuthzRequestParams {
+export interface OAuth2AuthorizationRequest {
   response_type: string;
   response_mode: string;
   client_id: string;
@@ -32,7 +32,7 @@ export interface OAuth2AuthzRequestParams {
   code_challenge_method: string;
 }
 
-export interface OAuth2TokenRequestParams {
+export interface OAuth2TokenRequest {
   grant_type: string;
   code?: string | null;
   refresh_token?: string | null | undefined;
