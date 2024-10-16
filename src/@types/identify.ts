@@ -4,8 +4,8 @@ export type Identity = {
 }
 
 export interface AuthorizationConfig {
-  authorizationBaseURL: string;
-  serverID: string;
+  authorizationFQDN: string;
+  serverUUID: string;
   type: string;
   mode: string;
   clientID: string;

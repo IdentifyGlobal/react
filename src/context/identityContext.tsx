@@ -12,8 +12,7 @@ export const IdentityProvider: React.FC<{ config: AuthorizationConfig, children:
   const [identity, setIdentity] = React.useState<Identity | undefined | null>(undefined);
   const [openidConfigurationURL, setOpenidConfigurationURL] = React.useState<URL | undefined>(undefined)
   React.useEffect(() => {
-    const discoveryEndpointURL = new URL(config.authorizationBaseURL)
-    discoveryEndpointURL.pathname = discoveryEndpointURL.pathname.replace(/\/+$/g, '') + `/s/${config.serverID}/.well-known/openid-configuration`
+    const discoveryEndpointURL = new URL(`/s/${config.serverUUID}/.well-known/openid-configuration`, `http://${config.authorizationFQDN}`)
     setOpenidConfigurationURL(discoveryEndpointURL)
 
     try {

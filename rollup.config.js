@@ -28,7 +28,6 @@ export default [
     ],
     plugins: [
       replace({
-        'process.env.IDENTIFY_AUTHORIZATION_SERVER_URL_BASE': JSON.stringify(process.env.IDENTIFY_AUTHORIZATION_SERVER_URL_BASE),
         'process.env.IDENTIFY_STORAGE_ENCRYPTION_KEY': JSON.stringify(process.env.IDENTIFY_STORAGE_ENCRYPTION_KEY),
         preventAssignment: true
       }),
