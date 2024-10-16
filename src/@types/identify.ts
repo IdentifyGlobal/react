@@ -13,15 +13,6 @@ export interface AuthorizationConfig {
   scope: string;
 }
 
-export type IdentityContextType = {
-  config: AuthorizationConfig;
-  openidConfigurationURL: URL | undefined;
-  token: OAuth2TokenResponse | undefined | null;
-  setToken: (token: OAuth2TokenResponse | undefined | null) => void;
-  identity: Identity | undefined | null;
-  setIdentity: (identity: Identity | undefined | null) => void;
-}
-
 export interface OAuth2AuthorizationRequest {
   response_type: string;
   response_mode: string;
@@ -56,4 +47,18 @@ export type OAuth2TokenResponse = {
 export interface OpenIDConfiguration {
   authorization_endpoint: string;
   token_endpoint: string;
+}
+
+export interface LoginState {
+  keyChallenge: string;
+  codeVerifier: string;
+}
+
+export type IdentityContextType = {
+  config: AuthorizationConfig;
+  openidConfiguration: OpenIDConfiguration | undefined;
+  token: OAuth2TokenResponse | undefined | null;
+  setToken: (token: OAuth2TokenResponse | undefined | null) => void;
+  identity: Identity | undefined | null;
+  setIdentity: (identity: Identity | undefined | null) => void;
 }

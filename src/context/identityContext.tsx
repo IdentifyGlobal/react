@@ -1,6 +1,6 @@
 // context/identityContext.tsx
 import * as React from 'react';
-import { IdentityContextType, Identity, AuthorizationConfig, OAuth2TokenResponse } from '../@types/identify';
+import { IdentityContextType, Identity, AuthorizationConfig, OAuth2TokenResponse, OpenIDConfiguration } from '../@types/identify';
 import { jwtDecode } from 'jwt-decode';
 import secureStorage from '../secureStorage';
 
@@ -10,23 +10,30 @@ export default identityContext
 export const IdentityProvider: React.FC<{ config: AuthorizationConfig, children: React.ReactNode }> = ({ config, children }) => {
   const [token, setToken] = React.useState<OAuth2TokenResponse | undefined | null>(undefined);
   const [identity, setIdentity] = React.useState<Identity | undefined | null>(undefined);
-  const [openidConfigurationURL, setOpenidConfigurationURL] = React.useState<URL | undefined>(undefined)
+  const [openidConfiguration, setOpenidConfiguration] = React.useState<OpenIDConfiguration | undefined>(undefined)
   React.useEffect(() => {
-    const discoveryEndpointURL = new URL(`/s/${config.serverUUID}/.well-known/openid-configuration`, `http://${config.authorizationFQDN}`)
-    setOpenidConfigurationURL(discoveryEndpointURL)
+    const { serverUUID, authorizationFQDN } = config
+    const openidConfigurationURL = new URL(`/s/${serverUUID}/.well-known/openid-configuration`, `http://${authorizationFQDN}`)
+    fetch(openidConfigurationURL, {
+      mode: 'cors',
+    })
+      .then((response: Response) => response.json())
+      .then((openidConfiguration: OpenIDConfiguration) => {
+        setOpenidConfiguration(openidConfiguration)
 
-    try {
-      const token: OAuth2TokenResponse = JSON.parse(secureStorage.getItem('_identify_token') as string)
-      setToken(token)
-      setIdentity(jwtDecode(token.id_token as string))
-    } catch {
-      setToken(null)
-      setIdentity(null)
-    }
+        try {
+          const token: OAuth2TokenResponse = JSON.parse(secureStorage.getItem('_identify_token') as string)
+          setToken(token)
+          setIdentity(jwtDecode(token.id_token as string))
+        } catch {
+          setToken(null)
+          setIdentity(null)
+        }
+      })
   }, [])
   return (
     <identityContext.Provider
-      value={{ config, openidConfigurationURL, token, setToken, identity, setIdentity }}
+      value={{ config, openidConfiguration, token, setToken, identity, setIdentity }}
     >
       {children}
     </identityContext.Provider>
