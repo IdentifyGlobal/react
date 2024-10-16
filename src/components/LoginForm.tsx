@@ -31,7 +31,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, onFailure, ...props })
   const [grantCount, setGrantCount] = React.useState<number>(0)
   const [state, setState] = React.useState<LoginFormState | undefined>(undefined)
   React.useEffect(() => {
-    if (openidConfiguration === undefined || token === undefined || grantCount > 1) return
+    if (openidConfiguration === undefined || token === undefined || grantCount > 1)
+      return
     const apply = (tokenResponse: OAuth2TokenResponse) => {
       try {
         secureStorage.setItem("_identify_token", JSON.stringify(tokenResponse))
@@ -79,13 +80,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, onFailure, ...props })
     }
     const callbackEventListener = ((event: CustomEvent) => {
       const tokenResponse: OAuth2TokenResponse = event.detail;
-      console.log(tokenResponse)
       apply(tokenResponse)
       secureStorage.removeItem('_identify_loginstate')
     }) as EventListener
-    window.addEventListener("identify_oauth2callback", callbackEventListener)
+    window.addEventListener("_identify_oauth2callback", callbackEventListener)
     return () => {
-      window.removeEventListener("identify_oauth2callback", callbackEventListener)
+      window.removeEventListener("_identify_oauth2callback", callbackEventListener)
     }
   }, [openidConfiguration, token])
   const authzEndpointURL: string = React.useMemo(() => {

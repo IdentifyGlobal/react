@@ -16,7 +16,8 @@ export interface LoginCallbackProps { }
 const LoginCallback: React.FC<LoginCallbackProps> = (props) => {
   const { openidConfiguration } = React.useContext(identityContext) as IdentityContextType;
   React.useEffect(() => {
-    if (openidConfiguration === undefined) return
+    if (openidConfiguration === undefined)
+      return
     const locationURL = new URL(location.href)
     const authzResponse = Object.fromEntries(new URLSearchParams(locationURL.hash.substring(1)).entries())
     const state: LoginState = JSON.parse(secureStorage.getItem('_identify_loginstate') as string)
@@ -32,7 +33,7 @@ const LoginCallback: React.FC<LoginCallbackProps> = (props) => {
       fetch(tokenEndpointURL)
         .then((response: Response) => response.json())
         .then((tokenResponse: OAuth2TokenResponse) => {
-          const event = new CustomEvent('identify_oauth2callback', { detail: tokenResponse })
+          const event = new CustomEvent('_identify_oauth2callback', { detail: tokenResponse })
           window.parent.dispatchEvent(event)
         })
     }
