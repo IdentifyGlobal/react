@@ -10,7 +10,12 @@ export default identityContext
 export const IdentityProvider: React.FC<{ config: AuthorizationConfig, children: React.ReactNode }> = ({ config, children }) => {
   const [token, setToken] = React.useState<OAuth2TokenResponse | undefined | null>(undefined);
   const [identity, setIdentity] = React.useState<Identity | undefined | null>(undefined);
+  const [openidConfigurationURL, setOpenidConfigurationURL] = React.useState<URL | undefined>(undefined)
   React.useEffect(() => {
+    const discoveryEndpointURL = new URL(config.authorizationBaseURL)
+    discoveryEndpointURL.pathname = discoveryEndpointURL.pathname.replace(/\/+$/g, '') + `/s/${config.serverID}/.well-known/openid-configuration`
+    setOpenidConfigurationURL(discoveryEndpointURL)
+
     try {
       const token: OAuth2TokenResponse = JSON.parse(secureStorage.getItem('_identify_token') as string)
       setToken(token)
@@ -22,7 +27,7 @@ export const IdentityProvider: React.FC<{ config: AuthorizationConfig, children:
   }, [])
   return (
     <identityContext.Provider
-      value={{ config, token, setToken, identity, setIdentity }}
+      value={{ config, openidConfigurationURL, token, setToken, identity, setIdentity }}
     >
       {children}
     </identityContext.Provider>

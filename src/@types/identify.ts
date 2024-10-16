@@ -4,7 +4,7 @@ export type Identity = {
 }
 
 export interface AuthorizationConfig {
-  domainID: string;
+  authorizationBaseURL: string;
   serverID: string;
   type: string;
   mode: string;
@@ -15,6 +15,7 @@ export interface AuthorizationConfig {
 
 export type IdentityContextType = {
   config: AuthorizationConfig;
+  openidConfigurationURL: URL | undefined;
   token: OAuth2TokenResponse | undefined | null;
   setToken: (token: OAuth2TokenResponse | undefined | null) => void;
   identity: Identity | undefined | null;
@@ -30,6 +31,11 @@ export interface OAuth2AuthorizationRequest {
   state: string;
   code_challenge: string;
   code_challenge_method: string;
+}
+
+export interface OAuth2AuthorizationResponse {
+  code: string;
+  state: string;
 }
 
 export interface OAuth2TokenRequest {
