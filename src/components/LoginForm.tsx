@@ -23,7 +23,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, ...props }) => {
   const [obtainCount, setObtainCount] = React.useState<number>(0)
   const [state, setState] = React.useState<LoginFormState | undefined>(undefined)
   React.useEffect(() => {
-    if (token === undefined) return;
+    if (token === undefined || obtainCount > 1) return;
     const openidConfigurationURL = new URL(`/d/${config.domainID}/s/${config.serverID}/.well-known/openid-configuration`, process.env.IDENTIFY_AUTHORIZATION_SERVER_URL_BASE);
     fetch(openidConfigurationURL)
       .then((response: Response) => response.json())
@@ -31,7 +31,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, ...props }) => {
         const prompt = () => {
           const stateKey = cryptoRandomString({ length: 12 })
           const codeVerifier = cryptoRandomString({
-            length: 64,
+            length: 57,
             characters: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~'
           }), codeChallenge = Base64url.stringify(sha256(codeVerifier))
           window.sessionStorage.setItem(`__state_${stateKey}`, JSON.stringify({
@@ -47,24 +47,23 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, ...props }) => {
 
         if (token === null) {
           prompt()
-        } else
-          if (obtainCount < 1) {
-            const tokenRequestParams: OAuth2TokenRequestParams = {
-              grant_type: 'refresh_token',
-              refresh_token: token?.refresh_token
-            };
-            const tokenEndpointURL = new URL('?' + new URLSearchParams(Object.entries(tokenRequestParams)), openidConfiguration.token_endpoint)
-            fetch(tokenEndpointURL)
-              .then((response: Response) => response.json())
-              .then((tokenResponse: OAuth2TokenResponse) => {
-                setObtainCount((previousCount) => previousCount + 1)
-                window.localStorage.setItem("identifyToken", JSON.stringify(tokenResponse))
-                setToken(tokenResponse)
-                const identity: Identity = jwtDecode(tokenResponse.id_token as string)
-                setIdentity(identity)
-                onSuccess()
-              })
-          }
+        } else {
+          const tokenRequestParams: OAuth2TokenRequestParams = {
+            grant_type: 'refresh_token',
+            refresh_token: token?.refresh_token
+          };
+          const tokenEndpointURL = new URL('?' + new URLSearchParams(Object.entries(tokenRequestParams)), openidConfiguration.token_endpoint)
+          fetch(tokenEndpointURL)
+            .then((response: Response) => response.json())
+            .then((tokenResponse: OAuth2TokenResponse) => {
+              setObtainCount((previousCount) => previousCount + 1)
+              window.localStorage.setItem("identifyToken", JSON.stringify(tokenResponse))
+              setToken(tokenResponse)
+              const identity: Identity = jwtDecode(tokenResponse.id_token as string)
+              setIdentity(identity)
+              onSuccess()
+            })
+        }
       })
     const eventListener = ((event: CustomEvent) => {
       setObtainCount((previousCount) => previousCount + 1)
