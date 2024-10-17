@@ -18,11 +18,11 @@ export interface IdentityProviderProps {
 }
 
 export const IdentityProvider: React.FC<IdentityProviderProps> = ({ configSettings, children }) => {
-  const [token, setToken] = React.useState<OAuth2TokenResponse | undefined | null>(undefined);
-  const [identity, setIdentity] = React.useState<Identity | undefined | null>(undefined);
-  const [openidConfiguration, setOpenidConfiguration] = React.useState<OpenIDConfiguration | undefined>(undefined);
   const [secureStorage, setSecureStorage] = React.useState<EncryptStorage | undefined>(undefined);
   const [secureSession, setSecureSession] = React.useState<EncryptStorage | undefined>(undefined);
+  const [openidConfiguration, setOpenidConfiguration] = React.useState<OpenIDConfiguration | undefined>(undefined);
+  const [token, setToken] = React.useState<OAuth2TokenResponse | undefined | null>(undefined);
+  const [identity, setIdentity] = React.useState<Identity | undefined | null>(undefined);
 
   React.useEffect(() => {
     const { encryptionKey, serverId, domainOrigin } = configSettings
