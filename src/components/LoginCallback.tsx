@@ -3,7 +3,6 @@ import * as React from 'react';
 import { IdentityContext } from '../context';
 import sha256 from 'crypto-js/sha256';
 import Base64url from 'crypto-js/enc-base64url';
-import { secureSessionStorage } from '../secureStorage';
 import {
   IdentityContextType,
   OAuth2TokenRequest,
@@ -14,15 +13,15 @@ import {
 export interface LoginCallbackProps { }
 
 const LoginCallback: React.FC<LoginCallbackProps> = (props) => {
-  const { openidConfiguration } = React.useContext(IdentityContext) as IdentityContextType;
+  const { secureSession, openidConfiguration } = React.useContext(IdentityContext) as IdentityContextType;
 
   React.useEffect(() => {
-    if (openidConfiguration === undefined)
+    if (secureSession === undefined || openidConfiguration === undefined)
       return
 
     const locationURL = new URL(location.href)
     const authzResponse = Object.fromEntries(new URLSearchParams(locationURL.hash.substring(1)).entries())
-    const state: LoginState = JSON.parse(secureSessionStorage.getItem('_identify_loginstate') as string)
+    const state: LoginState = JSON.parse(secureSession.getItem('_identify_loginstate') as string)
     const hashVerifier = authzResponse.state
 
     if (state.keyChallenge === Base64url.stringify(sha256(hashVerifier))) {
@@ -44,7 +43,7 @@ const LoginCallback: React.FC<LoginCallbackProps> = (props) => {
           }
         })
     }
-  }, [openidConfiguration])
+  }, [secureSession, openidConfiguration])
 
   return null;
 };

@@ -1,9 +1,12 @@
+import { EncryptStorage } from "encrypt-storage";
+
 // @types.identify.ts
 export type Identity = {
   username: string;
 }
 
 export interface IdentityProviderConfigurationSettings {
+  encryptionKey: string;
   domainOrigin: string;
   serverId: string;
   clientId: string;
@@ -54,6 +57,8 @@ export interface LoginState {
 
 export type IdentityContextType = {
   configSettings: IdentityProviderConfigurationSettings;
+  secureStorage: EncryptStorage | undefined;
+  secureSession: EncryptStorage | undefined;
   openidConfiguration: OpenIDConfiguration | undefined;
   token: OAuth2TokenResponse | undefined | null;
   setToken: (token: OAuth2TokenResponse | undefined | null) => void;

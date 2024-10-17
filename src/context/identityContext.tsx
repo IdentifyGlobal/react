@@ -1,7 +1,7 @@
 // context/IdentityContext.tsx
 import * as React from 'react';
 import { jwtDecode } from 'jwt-decode';
-import { secureLocalStorage } from '../secureStorage';
+import { EncryptStorage } from 'encrypt-storage';
 import {
   IdentityContextType,
   Identity,
@@ -21,10 +21,21 @@ export const IdentityProvider: React.FC<IdentityProviderProps> = ({ configSettin
   const [token, setToken] = React.useState<OAuth2TokenResponse | undefined | null>(undefined);
   const [identity, setIdentity] = React.useState<Identity | undefined | null>(undefined);
   const [openidConfiguration, setOpenidConfiguration] = React.useState<OpenIDConfiguration | undefined>(undefined);
+  const [secureStorage, setSecureStorage] = React.useState<EncryptStorage | undefined>(undefined);
+  const [secureSession, setSecureSession] = React.useState<EncryptStorage | undefined>(undefined);
 
   React.useEffect(() => {
+    const { encryptionKey, serverId, domainOrigin } = configSettings
+    const secureStorage = new EncryptStorage(encryptionKey, {
+      stateManagementUse: true,
+    })
+    setSecureStorage(secureStorage)
+    const secureSession = new EncryptStorage(encryptionKey, {
+      stateManagementUse: true,
+      storageType: 'sessionStorage',
+    })
+    setSecureSession(secureSession)
     const locationURL = new URL(location.href)
-    const { serverId, domainOrigin } = configSettings
     const discoveryEndpointURL = new URL(`/s/${serverId}/.well-known/openid-configuration`, `${locationURL.protocol}//${domainOrigin}`)
     fetch(discoveryEndpointURL, {
       mode: 'cors',
@@ -34,7 +45,7 @@ export const IdentityProvider: React.FC<IdentityProviderProps> = ({ configSettin
         setOpenidConfiguration(openidConfiguration)
 
         try {
-          const token: OAuth2TokenResponse = JSON.parse(secureLocalStorage.getItem('_identify_token') as string)
+          const token: OAuth2TokenResponse = JSON.parse(secureStorage.getItem('_identify_token') as string)
           setToken(token)
           setIdentity(jwtDecode(token.id_token as string))
         } catch {
@@ -47,6 +58,8 @@ export const IdentityProvider: React.FC<IdentityProviderProps> = ({ configSettin
     <IdentityContext.Provider
       value={{
         configSettings,
+        secureStorage,
+        secureSession,
         openidConfiguration,
         token,
         setToken,

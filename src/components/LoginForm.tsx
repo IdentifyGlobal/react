@@ -5,7 +5,6 @@ import cryptoRandomString from 'crypto-random-string';
 import sha256 from 'crypto-js/sha256';
 import Base64url from 'crypto-js/enc-base64url';
 import { jwtDecode } from 'jwt-decode';
-import { secureLocalStorage, secureSessionStorage } from '../secureStorage';
 import {
   IdentityContextType,
   Identity,
@@ -29,6 +28,8 @@ export interface LoginFormProps {
 const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, onFailure, ...props }) => {
   const {
     configSettings,
+    secureStorage,
+    secureSession,
     openidConfiguration,
     token,
     setToken,
@@ -40,12 +41,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, onFailure, ...props })
   const [state, setState] = React.useState<LoginFormState | undefined>(undefined)
 
   React.useEffect(() => {
-    if (openidConfiguration === undefined || token === undefined || grantCount > 0)
+    if (secureStorage === undefined || secureSession === undefined || openidConfiguration === undefined || token === undefined || grantCount > 0)
       return
 
     const apply = (token: OAuth2TokenResponse) => {
       try {
-        secureLocalStorage.setItem("_identify_token", JSON.stringify(token))
+        secureStorage.setItem("_identify_token", JSON.stringify(token))
         const identity: Identity = jwtDecode(token.id_token as string)
         setGrantCount((count) => count + 1)
         setToken(token)
@@ -69,7 +70,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, onFailure, ...props })
         keyChallenge,
         codeVerifier,
       }
-      secureSessionStorage.setItem('_identify_loginstate', JSON.stringify(loginState))
+      secureSession.setItem('_identify_loginstate', JSON.stringify(loginState))
       setState({ keyVerifier, codeVerifier, codeChallenge })
     }
 
@@ -97,7 +98,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, onFailure, ...props })
     const callbackEventListener = ((event: CustomEvent) => {
       const tokenResponse: OAuth2TokenResponse = event.detail;
       apply(tokenResponse)
-      secureSessionStorage.removeItem('_identify_loginstate')
+      secureSession.removeItem('_identify_loginstate')
     }) as EventListener
     const callbackErrorEventListener = ((event: CustomEvent) => {
       prompt()
@@ -108,7 +109,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, onFailure, ...props })
       window.removeEventListener("_identify_oauth2callback", callbackEventListener)
       window.removeEventListener("_identify_oauth2callbackerror", callbackErrorEventListener)
     }
-  }, [openidConfiguration, token, grantCount])
+  }, [secureStorage, secureSession, openidConfiguration, token, grantCount])
 
   const authzEndpointURL: string = React.useMemo(() => {
     if (openidConfiguration === undefined || state === undefined)
