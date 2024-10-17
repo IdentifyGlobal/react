@@ -15,6 +15,7 @@ npm install @identify/react
 import { IdentityProvider, LoginCallback } from "@identify/react";
 
 // ...
+
 const identityProviderConfigSettings = {
   encryptionKey: "<random-crypto-string>",
   domainOrigin: "auth.example.com",
