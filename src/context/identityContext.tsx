@@ -40,17 +40,19 @@ export const IdentityProvider: React.FC<IdentityProviderProps> = ({ configSettin
     fetch(discoveryEndpointURL, {
       mode: 'cors',
     })
-      .then((response: Response) => response.json())
-      .then((openidConfiguration: OpenIDConfiguration) => {
-        setOpenidConfiguration(openidConfiguration)
+      .then(async (response: Response) => {
+        if (response.status === 200) {
+          const openidConfiguration: OpenIDConfiguration = await response.json()
+          setOpenidConfiguration(openidConfiguration)
 
-        try {
-          const token: OAuth2TokenResponse = JSON.parse(secureStorage.getItem('_identify_token') as string)
-          setToken(token)
-          setIdentity(jwtDecode(token.id_token as string))
-        } catch {
-          setToken(null)
-          setIdentity(null)
+          try {
+            const token: OAuth2TokenResponse = JSON.parse(secureStorage.getItem('_identify_token') as string)
+            setToken(token)
+            setIdentity(jwtDecode(token.id_token as string))
+          } catch {
+            setToken(null)
+            setIdentity(null)
+          }
         }
       })
   }, [])
