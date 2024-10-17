@@ -1,6 +1,6 @@
 {
   "name": "@identify/react",
-  "version": "1.0.0",
+  "version": "1.0.0-alpha",
   "description": "",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",

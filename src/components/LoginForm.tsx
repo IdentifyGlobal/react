@@ -99,9 +99,14 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, onFailure, ...props })
       apply(tokenResponse)
       secureSessionStorage.removeItem('_identify_loginstate')
     }) as EventListener
+    const callbackErrorEventListener = ((event: CustomEvent) => {
+      prompt()
+    }) as EventListener
     window.addEventListener("_identify_oauth2callback", callbackEventListener)
+    window.addEventListener("_identify_oauth2callbackerror", callbackErrorEventListener)
     return () => {
       window.removeEventListener("_identify_oauth2callback", callbackEventListener)
+      window.removeEventListener("_identify_oauth2callbackerror", callbackErrorEventListener)
     }
   }, [openidConfiguration, token, grantCount])
 

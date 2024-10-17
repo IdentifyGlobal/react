@@ -33,10 +33,15 @@ const LoginCallback: React.FC<LoginCallbackProps> = (props) => {
       };
       const tokenEndpointURL = new URL('?' + new URLSearchParams(Object.entries(tokenRequest)), openidConfiguration.token_endpoint)
       fetch(tokenEndpointURL)
-        .then((response: Response) => response.json())
-        .then((tokenResponse: OAuth2TokenResponse) => {
-          const event = new CustomEvent('_identify_oauth2callback', { detail: tokenResponse })
-          window.parent.dispatchEvent(event)
+        .then(async (response: Response) => {
+          if (response.status === 200) {
+            const tokenResponse: OAuth2TokenResponse = await response.json()
+            const event = new CustomEvent('_identify_oauth2callback', { detail: tokenResponse })
+            window.parent.dispatchEvent(event)
+          } else {
+            const event = new CustomEvent('_identify_oauth2callbackerror', { detail: response.status })
+            window.parent.dispatchEvent(event)
+          }
         })
     }
   }, [openidConfiguration])
