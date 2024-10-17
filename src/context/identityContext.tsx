@@ -1,7 +1,7 @@
 // context/IdentityContext.tsx
 import * as React from 'react';
 import { jwtDecode } from 'jwt-decode';
-import secureStorage from '../secureStorage';
+import { secureLocalStorage } from '../secureStorage';
 import {
   IdentityContextType,
   Identity,
@@ -34,7 +34,7 @@ export const IdentityProvider: React.FC<IdentityProviderProps> = ({ configSettin
         setOpenidConfiguration(openidConfiguration)
 
         try {
-          const token: OAuth2TokenResponse = JSON.parse(secureStorage.getItem('_identify_token') as string)
+          const token: OAuth2TokenResponse = JSON.parse(secureLocalStorage.getItem('_identify_token') as string)
           setToken(token)
           setIdentity(jwtDecode(token.id_token as string))
         } catch {

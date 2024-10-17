@@ -5,7 +5,7 @@ import cryptoRandomString from 'crypto-random-string';
 import sha256 from 'crypto-js/sha256';
 import Base64url from 'crypto-js/enc-base64url';
 import { jwtDecode } from 'jwt-decode';
-import secureStorage from '../secureStorage';
+import { secureLocalStorage, secureSessionStorage } from '../secureStorage';
 import {
   IdentityContextType,
   Identity,
@@ -45,7 +45,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, onFailure, ...props })
 
     const apply = (token: OAuth2TokenResponse) => {
       try {
-        secureStorage.setItem("_identify_token", JSON.stringify(token))
+        secureLocalStorage.setItem("_identify_token", JSON.stringify(token))
         const identity: Identity = jwtDecode(token.id_token as string)
         setGrantCount((count) => count + 1)
         setToken(token)
@@ -69,7 +69,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, onFailure, ...props })
         keyChallenge,
         codeVerifier,
       }
-      secureStorage.setItem('_identify_loginstate', JSON.stringify(loginState))
+      secureSessionStorage.setItem('_identify_loginstate', JSON.stringify(loginState))
       setState({ keyVerifier, codeVerifier, codeChallenge })
     }
 
@@ -97,7 +97,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, onFailure, ...props })
     const callbackEventListener = ((event: CustomEvent) => {
       const tokenResponse: OAuth2TokenResponse = event.detail;
       apply(tokenResponse)
-      secureStorage.removeItem('_identify_loginstate')
+      secureSessionStorage.removeItem('_identify_loginstate')
     }) as EventListener
     window.addEventListener("_identify_oauth2callback", callbackEventListener)
     return () => {

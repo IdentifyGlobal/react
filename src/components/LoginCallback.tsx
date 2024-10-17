@@ -3,7 +3,7 @@ import * as React from 'react';
 import { IdentityContext } from '../context';
 import sha256 from 'crypto-js/sha256';
 import Base64url from 'crypto-js/enc-base64url';
-import secureStorage from '../secureStorage';
+import { secureSessionStorage } from '../secureStorage';
 import {
   IdentityContextType,
   OAuth2TokenRequest,
@@ -22,7 +22,7 @@ const LoginCallback: React.FC<LoginCallbackProps> = (props) => {
 
     const locationURL = new URL(location.href)
     const authzResponse = Object.fromEntries(new URLSearchParams(locationURL.hash.substring(1)).entries())
-    const state: LoginState = JSON.parse(secureStorage.getItem('_identify_loginstate') as string)
+    const state: LoginState = JSON.parse(secureSessionStorage.getItem('_identify_loginstate') as string)
     const hashVerifier = authzResponse.state
 
     if (state.keyChallenge === Base64url.stringify(sha256(hashVerifier))) {
