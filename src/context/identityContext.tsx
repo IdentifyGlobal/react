@@ -25,7 +25,7 @@ export const IdentityProvider: React.FC<IdentityProviderProps> = ({ configSettin
   const [identity, setIdentity] = React.useState<Identity | undefined | null>(undefined);
 
   React.useEffect(() => {
-    const { encryptionKey, serverId, domainOrigin } = configSettings
+    const { encryptionKey, domainOrigin, serverId } = configSettings
     const secureStorage = new EncryptStorage(encryptionKey, {
       stateManagementUse: true,
     })
