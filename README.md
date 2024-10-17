@@ -1,4 +1,4 @@
-# react-identify
+# @identifyglobal/react
 
 ## Requirements:
 
@@ -6,14 +6,14 @@
 - npm (Node.js package manager)
 
 ```bash
-npm install @identify/react
+npm install @identifyglobal/react
 ```
 
 ### Usage
 
 ```javascript
 // ...
-import { IdentityProvider, LoginForm, LoginCallback } from "@identify/react";
+import { IdentityProvider, LoginForm, LoginCallback } from "@identifyglobal/react";
 
 // ...
 
