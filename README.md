@@ -12,9 +12,21 @@ npm install @identify/react
 ### Usage
 
 ```javascript
-import { IdentityProvider, LoginCallback } from "@identify/react";
+import { IdentityProvider, LoginForm, LoginCallback } from "@identify/react";
 
 // ...
+
+const router = createBrowserRouter([
+  // ...
+  {
+    path: "/login",
+    element: <LoginForm />,
+  },
+  {
+    path: "/oauth2/callback",
+    element: <LoginCallback />,
+  },
+]);
 
 const identityProviderConfigSettings = {
   encryptionKey: "<random-crypto-string>",
