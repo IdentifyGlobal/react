@@ -1,23 +1,25 @@
 // components/LoginCallback.tsx
 import * as React from 'react';
-import identityContext from '../context/identityContext';
+import { IdentityContext } from '../context';
+import sha256 from 'crypto-js/sha256';
+import Base64url from 'crypto-js/enc-base64url';
+import secureStorage from '../secureStorage';
 import {
   IdentityContextType,
   OAuth2TokenRequest,
   OAuth2TokenResponse,
   LoginState
 } from '../@types/identify';
-import sha256 from 'crypto-js/sha256';
-import Base64url from 'crypto-js/enc-base64url';
-import secureStorage from '../secureStorage';
 
 export interface LoginCallbackProps { }
 
 const LoginCallback: React.FC<LoginCallbackProps> = (props) => {
-  const { openidConfiguration } = React.useContext(identityContext) as IdentityContextType;
+  const { openidConfiguration } = React.useContext(IdentityContext) as IdentityContextType;
+
   React.useEffect(() => {
     if (openidConfiguration === undefined)
       return
+
     const locationURL = new URL(location.href)
     const authzResponse = Object.fromEntries(new URLSearchParams(locationURL.hash.substring(1)).entries())
     const state: LoginState = JSON.parse(secureStorage.getItem('_identify_loginstate') as string)
@@ -27,7 +29,7 @@ const LoginCallback: React.FC<LoginCallbackProps> = (props) => {
       const tokenRequest: OAuth2TokenRequest = {
         grant_type: 'authorization_code',
         code: authzResponse.code,
-        code_verifier: state.codeVerifier
+        code_verifier: state.codeVerifier,
       };
       const tokenEndpointURL = new URL('?' + new URLSearchParams(Object.entries(tokenRequest)), openidConfiguration.token_endpoint)
       fetch(tokenEndpointURL)
@@ -38,6 +40,7 @@ const LoginCallback: React.FC<LoginCallbackProps> = (props) => {
         })
     }
   }, [openidConfiguration])
+
   return null;
 };
 

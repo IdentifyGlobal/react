@@ -3,14 +3,12 @@ export type Identity = {
   username: string;
 }
 
-export interface AuthorizationConfig {
-  authorizationFQDN: string;
-  serverUUID: string;
-  type: string;
-  mode: string;
-  clientID: string;
-  redirectURI: string;
-  scope: string;
+export interface IdentityProviderConfigurationSettings {
+  domainOrigin: string;
+  serverId: string;
+  clientId: string;
+  redirectUri: string;
+  accessScope: string;
 }
 
 export interface OAuth2AuthorizationRequest {
@@ -55,7 +53,7 @@ export interface LoginState {
 }
 
 export type IdentityContextType = {
-  config: AuthorizationConfig;
+  configSettings: IdentityProviderConfigurationSettings;
   openidConfiguration: OpenIDConfiguration | undefined;
   token: OAuth2TokenResponse | undefined | null;
   setToken: (token: OAuth2TokenResponse | undefined | null) => void;

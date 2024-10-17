@@ -1,20 +1,32 @@
-// context/identityContext.tsx
+// context/IdentityContext.tsx
 import * as React from 'react';
-import { IdentityContextType, Identity, AuthorizationConfig, OAuth2TokenResponse, OpenIDConfiguration } from '../@types/identify';
 import { jwtDecode } from 'jwt-decode';
 import secureStorage from '../secureStorage';
+import {
+  IdentityContextType,
+  Identity,
+  IdentityProviderConfigurationSettings,
+  OAuth2TokenResponse,
+  OpenIDConfiguration,
+} from '../@types/identify';
 
-const identityContext = React.createContext<IdentityContextType | null>(null);
-export default identityContext
+export const IdentityContext = React.createContext<IdentityContextType | undefined | null>(undefined);
 
-export const IdentityProvider: React.FC<{ config: AuthorizationConfig, children: React.ReactNode }> = ({ config, children }) => {
+export interface IdentityProviderProps {
+  configSettings: IdentityProviderConfigurationSettings;
+  children: React.ReactNode;
+}
+
+export const IdentityProvider: React.FC<IdentityProviderProps> = ({ configSettings, children }) => {
   const [token, setToken] = React.useState<OAuth2TokenResponse | undefined | null>(undefined);
   const [identity, setIdentity] = React.useState<Identity | undefined | null>(undefined);
-  const [openidConfiguration, setOpenidConfiguration] = React.useState<OpenIDConfiguration | undefined>(undefined)
+  const [openidConfiguration, setOpenidConfiguration] = React.useState<OpenIDConfiguration | undefined>(undefined);
+
   React.useEffect(() => {
-    const { serverUUID, authorizationFQDN } = config
-    const openidConfigurationURL = new URL(`/s/${serverUUID}/.well-known/openid-configuration`, `http://${authorizationFQDN}`)
-    fetch(openidConfigurationURL, {
+    const locationURL = new URL(location.href)
+    const { serverId, domainOrigin } = configSettings
+    const discoveryEndpointURL = new URL(`/s/${serverId}/.well-known/openid-configuration`, `${locationURL.protocol}//${domainOrigin}`)
+    fetch(discoveryEndpointURL, {
       mode: 'cors',
     })
       .then((response: Response) => response.json())
@@ -32,20 +44,27 @@ export const IdentityProvider: React.FC<{ config: AuthorizationConfig, children:
       })
   }, [])
   return (
-    <identityContext.Provider
-      value={{ config, openidConfiguration, token, setToken, identity, setIdentity }}
+    <IdentityContext.Provider
+      value={{
+        configSettings,
+        openidConfiguration,
+        token,
+        setToken,
+        identity,
+        setIdentity
+      }}
     >
       {children}
-    </identityContext.Provider>
+    </IdentityContext.Provider>
   );
 };
 
 export const useIdentity = () => {
-  const { identity } = React.useContext(identityContext) as IdentityContextType;
+  const { identity } = React.useContext(IdentityContext) as IdentityContextType;
   return identity;
 };
 
 export const useToken = () => {
-  const { token } = React.useContext(identityContext) as IdentityContextType;
+  const { token } = React.useContext(IdentityContext) as IdentityContextType;
   return token;
 };
