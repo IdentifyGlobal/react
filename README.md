@@ -12,6 +12,7 @@ npm install @identify/react
 ### Usage
 
 ```javascript
+// ...
 import { IdentityProvider, LoginForm, LoginCallback } from "@identify/react";
 
 // ...
